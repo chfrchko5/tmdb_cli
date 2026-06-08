@@ -1,6 +1,7 @@
 import requests
 import typer
 from typing import Annotated, Optional
+from movie_data import response_json
 
 app = typer.Typer()
 
@@ -18,16 +19,16 @@ headers = {
 @app.command()
 def main(
         now_playing: Annotated[
-            Optional[bool], typer.Option(help="display currently playing movies")
+            Optional[bool], typer.Option("--now-playing", help="display currently playing movies")
         ] = False,
         popular: Annotated[
-            Optional[bool], typer.Option(help="display popular movies")
+            Optional[bool], typer.Option("--popular", help="display popular movies")
         ] = False,
         top_rated: Annotated[
-            Optional[bool], typer.Option(help="display top rated movies")
+            Optional[bool], typer.Option("--top-rated", help="display top rated movies")
         ] = False,
         upcoming: Annotated[
-            Optional[bool], typer.Option(help="display upcoming movies")
+            Optional[bool], typer.Option("--upcoming", help="display upcoming movies")
         ] = False
 ):
     movie_types = ["now_playing", "popular", "top_rated", "upcoming"]
@@ -36,19 +37,19 @@ def main(
         if now_playing:
             response = requests.get(url_getter(movie_types[0]), headers=headers)
             response.raise_for_status()
-            print(url_getter(movie_types[0]))
+            response_json(response)
         elif popular:
             response = requests.get(url_getter(movie_types[1]), headers=headers)
             response.raise_for_status()
-            print(url_getter(movie_types[1]))
+            response_json(response)
         elif top_rated:
             response = requests.get(url_getter(movie_types[2]), headers=headers)
             response.raise_for_status()
-            print(url_getter(movie_types[2]))
+            response_json(response)
         elif upcoming:
             response = requests.get(url_getter(movie_types[3]), headers=headers)
             response.raise_for_status()
-            print(url_getter(movie_types[3]))
+            response_json(response)
         else:
             typer.echo("Please provide a filter to display movies", err=True)
             print("*** --now-playing")
